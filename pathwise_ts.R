@@ -35,7 +35,19 @@ Path.TS.Para <- function(exact = TRUE,...){
 }
 
 
-
+ridge.Stacking <- function(X, Y, ridgePen){
+# Stacking iden matrix to utilize Elastic Net
+#
+#	
+	n = nrow(X)
+	p = ncol(X)
+	zero_vec = matrix(0, p, 1)
+	Iden_mat = diag(rep(1,p))
+	X = rbind(X,ridgePen*Iden_mat) 
+	Y = rbind(Y,zero_vec)
+	
+	return(list(X = X, Y = Y))
+}
 
 
 
@@ -58,14 +70,6 @@ ExactPath.TS <- function(X,Y, which.covariate, betaNull, multiTest, path.method 
 #
 	n = nrow(X)
 	p = ncol(X)
-	
-	if (ridgePen > 0){
-		zero_vec = rep(0,p)
-		Iden_mat = diag(rep(1,p))
-		X = rbind(X,ridgePen*Iden_mat) 
-		Y = append(Y,zero_vec)
-	
-	}
 
 ################# Here we go ! ! ! ##############################################
 	

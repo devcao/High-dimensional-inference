@@ -17,6 +17,7 @@ source("~/hdi_path/bin/pathwise_ts.R")
 
 
 
+
 Path.Resample = function(X, Y, which.covariate, betaNull, multiTest, B = 500, parallel = FALSE, exact = TRUE, beta.init = 'adaptive', beta.true = beta, ...){
 # Bootstrap the null distribution of Path-based statistic, and return reject or not
 #
@@ -30,7 +31,7 @@ Path.Resample = function(X, Y, which.covariate, betaNull, multiTest, B = 500, pa
 # Return:  
 #	Reject or not under alpha = 0.2,0.1,0.05,0.01
 # 	p.values of the test
-
+  
 	
   n = nrow(X)
   p = ncol(X)
@@ -60,7 +61,7 @@ Path.Resample = function(X, Y, which.covariate, betaNull, multiTest, B = 500, pa
     				bhat = coef(cv.ncvreg(X = X, y = Y, penalty = "SCAD",family = "gaussian", nfold= 10))[-1]
 
     			}else if (beta.init == "Truth"){
-    				bhat = beta_true
+    				bhat = beta.true
     			} 
 
     
@@ -108,7 +109,7 @@ Path.Resample = function(X, Y, which.covariate, betaNull, multiTest, B = 500, pa
     	rej[count,2] = TS[count] > quantile(TS_null,0.9)
     	rej[count,3] = TS[count] > quantile(TS_null,0.95)
     	rej[count,4] = TS[count] > quantile(TS_null,0.99)
-    	pval[count] = mean(TS_null > TS[count])
+    	pval[count] = mean(TS_null >= TS[count])
 
     	count = count + 1
     	

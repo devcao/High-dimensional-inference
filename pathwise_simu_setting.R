@@ -34,7 +34,16 @@ depenDesign = function(n, p, beta, rho){
 		X=rmvnorm(n,mean=Mu,sigma=Sigma)
 		Y <- X %*% beta + rnorm(n,0,1)   
    
-		}else if (rho > 0){  # Topliez corr
+		}else if (rho == "weak_equl"){
+				
+				Sigma = matrix(rep(0.5,p*p),p,p)
+    			diag(Sigma) = rep(1,p)
+
+    			Mu=rep(0,p)
+				X=rmvnorm(n,mean=Mu,sigma=Sigma)
+				Y <- X %*% beta + rnorm(n,0,1)   
+   
+			}else if (rho > 0){  # Topliez corr
 
     		Sigma = diag(p)
 
@@ -52,6 +61,7 @@ depenDesign = function(n, p, beta, rho){
 
 				X <- matrix(rnorm(n*p),nrow=n)
 				Y <- X %*% beta + rnorm(n,0,1)
+			
 			}
 
 

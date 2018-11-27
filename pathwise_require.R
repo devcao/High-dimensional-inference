@@ -8,5 +8,7 @@ require(pryr)
 require(mvtnorm)
 require(plus)
 require(ncvreg)
+require(Matrix)
+
 
 len = length

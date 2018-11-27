@@ -13,8 +13,67 @@ source("~/hdi_path/bin/pathwise_require.R")
 source("~/hdi_path/bin/pathwise_simu_setting.R")
 library(scalreg)
 source(file.path("~/SI/Sim-CI.R"))
+source(file.path("~/SI/ST.R"))
+
 ######
 
+
+#ST <- function(X.f, Y.f, sub.size, test.set, M=500, alpha=c(0.2,0.1,0.05,0.01))
+
+################ de-sparsified lasso #########################
+ST.Power = function(n = 100, p = 1000, beta, rho, iter = 500, setting = 'dep', which.covariate){
+#Return the power of de-sparsified under different settings    
+# Args:
+# setting: different settings, check 'pathwise_simu_setting.R for details'  
+#   rho: related to dependent design setting
+# n,p,beta : sample size, features, coefficients
+#   iter : # of iterations 
+#
+# Return:
+# A matrix of len(which.covariate) * 4 : Simulated power for j-th covariate
+#  
+
+  ST.power.nst = matrix(0,iter,4)
+  ST.power.st = matrix(0,iter,4)
+  
+  #pval = matrix(NA, iter, p)
+  
+  for(s in 1:iter){
+
+    
+    data = dataGen(setting = setting, n = n, p = p, beta = beta, rho = rho)
+
+
+
+    X_sp = data$X
+    Y_sp = data$Y
+
+    sub.size <- n*0.3
+    
+    results = ST(X.f = X_sp, Y.f = Y_sp, sub.size = sub.size, test.set = which.covariate)
+    print(results)
+    ST.power.nst[s,] <- results$nst
+    ST.power.st[s,] <- results$st
+    
+    
+    if(s %% 10 == 0){  cat("Now computing:", s, "\n")  }
+    
+  }
+ 
+  simCI.power.nst=apply(ST.power.nst,2,mean)  
+  
+  simCI.power.st=apply(ST.power.st,2,mean)  
+  
+  return(list(nst = ST.power.nst, st = ST.power.st))
+
+}  
+
+##############################################################
+
+
+
+
+######
 ################ de-sparsified lasso #########################
 simCI.Power = function(n = 100, p = 1000, beta, rho, iter = 500, setting = 'dep', which.covariate, betaNull){
 #Return the power of de-sparsified under different settings    
