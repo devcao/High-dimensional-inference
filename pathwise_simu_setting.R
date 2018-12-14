@@ -43,18 +43,14 @@ depenDesign = function(n, p, beta, rho){
 				X=rmvnorm(n,mean=Mu,sigma=Sigma)
 				Y <- X %*% beta + rnorm(n,0,1)   
    
-			}else if (rho > 0){  # Topliez corr
+			}else if (rho > 0){  # toeplitz matrix
 
-    		Sigma = diag(p)
+    		Sigma = toeplitz( rho^(0:(p - 1)) )
 
-    		for(i in 1:p){
-      			for(j in 1:p){
-        			Sigma[i,j]=rho^(abs(i-j))
-        		}
-    		}
-
+    		
     		Mu = rep(0,p)
-			X = rmvnorm(n,mean=Mu,sigma=Sigma)
+			#X = rmvnorm(n,mean = Mu,sigma = Sigma)
+			X = rmvn(n, mu = Mu,sigma = Sigma)
 			Y <- X %*% beta + rnorm(n,0,1)  
 
 			}else if (rho == 0){  # independent

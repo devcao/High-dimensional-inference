@@ -52,7 +52,7 @@ ridge.Stacking <- function(X, Y, ridgePen){
 
 
 
-ExactPath.TS <- function(X,Y, which.covariate, betaNull, multiTest, path.method = 'lars', norm = 'L2.squared', normalize = TRUE, intercept = FALSE, ridgePen = 0){
+ExactPath.TS <- function(v = 1, X,Y, which.covariate, betaNull, multiTest, path.method = 'lars', norm = 'L2.squared', normalize = TRUE, intercept = FALSE, ridgePen = 0){
 # Calculate PATH statistic exactly	
 #
 # Args:
@@ -95,11 +95,28 @@ ExactPath.TS <- function(X,Y, which.covariate, betaNull, multiTest, path.method 
 
 					lars.out <- lars(X.sc, newY, type = "lasso", intercept = intercept, use.Gram = FALSE, normalize=normalize)
 					lambda.hat <- sort(c(lars.out$lambda,0),decreasing=FALSE)
-					beta.hat <- coef(lars.out)[seq(length(lambda.hat),1,-1),] 
+					if(v==1){
+						beta.hat <- coef(lars.out)[seq(length(lambda.hat),1,-1),] 
+					
+					}else{
+						beta.hat <- coef(lars.out, s = lambda.hat, mode = "lambda")
+						
+					}
+					#cat("same?", all(beta.hat == beta.test), "\n" )
+
 
 					lars.j.out <- lars(X.sc[, -j], newY, type = "lasso", intercept = intercept, use.Gram = FALSE,normalize=normalize)
 					lambda.j.hat <- sort(c(lars.j.out$lambda,0),decreasing=FALSE)
-					beta_val <- coef(lars.j.out)[seq(length(lambda.j.hat),1,-1),]
+					if(v==1){
+						beta_val <- coef(lars.j.out)[seq(length(lambda.j.hat),1,-1),]
+					
+					}else{
+						beta_val <- coef(lars.j.out, s = lambda.j.hat, mode = "lambda")
+						
+					}
+
+
+					#cat("j, same?", all(beta_val == beta_val_test), "\n" )
 
 			
 				}else if((!multiTest)){  #indivdual test
@@ -109,11 +126,30 @@ ExactPath.TS <- function(X,Y, which.covariate, betaNull, multiTest, path.method 
 
 					lars.out <- lars(X.sc, newY , type = "lasso", intercept = intercept, use.Gram = FALSE, normalize=normalize)
 					lambda.hat <- sort(c(lars.out$lambda,0),decreasing=FALSE)
-					beta.hat <- coef(lars.out)[seq(length(lambda.hat),1,-1),] 
+					
+					if(v==1){
+						beta.hat <- coef(lars.out)[seq(length(lambda.hat),1,-1),] 
+						cat("1")
+					}else{
+						beta.hat <- coef(lars.out, s = lambda.hat, mode = "lambda")
+						cat("2")
+					}
+					#cat("same?", all(beta.hat == beta.test), "\n" )
+
 
 					lars.j.out <- lars(X.sc[, -j], newY, type = "lasso", intercept = intercept, use.Gram = FALSE,normalize=normalize)
 					lambda.j.hat <- sort(c(lars.j.out$lambda,0),decreasing=FALSE)
-					beta_val <- coef(lars.j.out)[seq(length(lambda.j.hat),1,-1),]
+					if(v==1){
+						beta_val <- coef(lars.j.out)[seq(length(lambda.j.hat),1,-1),]
+					cat("1")	
+					}else{
+						beta_val <- coef(lars.j.out, s = lambda.j.hat, mode = "lambda")
+						cat("2")
+					}
+					
+
+					#cat("j, same?", all(beta_val == beta_val_test), "\n" )
+
 
 				}else{
 					stop("wrong input")

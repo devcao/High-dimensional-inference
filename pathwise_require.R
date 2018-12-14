@@ -9,6 +9,7 @@ require(mvtnorm)
 require(plus)
 require(ncvreg)
 require(Matrix)
+require(mvnfast)
 
 
 len = length
