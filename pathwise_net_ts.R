@@ -69,6 +69,7 @@ ExactNet.TS <- function(X, Y, alpha = 1, family = "gaussian",  which.covariate, 
 
 			X.sc = scale(X)
 
+
 			a1 = glmnet(X.sc, newY, alpha = alpha, family = family, nlambda = 100, family = "gaussian", intercept = intercept, standardize = normalize)
 			max_lam = max(a1$lambda)
 
